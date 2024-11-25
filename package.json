@@ -1,0 +1,14 @@
+{
+    "name": "animoon-cache",
+    "version": "1.0.0",
+    "description": "Script to cache all pages for animoon.me",
+    "main": "scripts/visit-pages.js",
+    "scripts": {
+        "start": "node scripts/visit-pages.js"
+    },
+    "dependencies": {
+        "cheerio": "^1.0.0",
+        "node-fetch": "^3.0.0",
+        "puppeteer": "^23.9.0"
+    }
+}
