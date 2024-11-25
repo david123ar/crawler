@@ -9,18 +9,22 @@ const HIANIME_EPISODES_API = "https://hianimes.vercel.app/anime/episodes";
 const visitPage = async (url, page) => {
   console.log(`Visiting: ${url}`);
 
-  // Navigate to the page and wait for it to load
-  await page.goto(url, { waitUntil: 'networkidle2' });
+  try {
+    // Navigate to the page and wait for it to load
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
-  // Get the page content
-  const content = await page.content();
+    // Get the page content
+    const content = await page.content();
 
-  // Parse the HTML content with Cheerio (optional)
-  const $ = cheerio.load(content);
+    // Parse the HTML content with Cheerio (optional)
+    const $ = cheerio.load(content);
 
-  // Example: Scraping title using Cheerio
-  const title = $('title').text();
-  console.log('Page Title:', title);
+    // Example: Scraping title using Cheerio
+    const title = $('title').text();
+    console.log('Page Title:', title);
+  } catch (error) {
+    console.error(`Error visiting page ${url}:`, error.message);
+  }
 };
 
 // Function to visit all anime pages
@@ -103,7 +107,10 @@ const fetchURL = async (url) => {
 
 // Main function to run all tasks
 const main = async () => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'] // Add this line if running as root
+  });
 
   try {
     console.log("Starting page visits...");
@@ -120,9 +127,22 @@ const main = async () => {
 
 // Restart after visiting all pages
 const startVisitLoop = async () => {
-  while (true) {
-    await main();
-    console.log("Restarting page visits...");
+  let retryCount = 0;
+  const maxRetries = 3;
+
+  while (retryCount < maxRetries) {
+    try {
+      await main();
+      console.log("All pages visited, restarting...");
+    } catch (error) {
+      console.error("Error in visiting pages:", error);
+      retryCount++;
+      if (retryCount < maxRetries) {
+        console.log(`Retrying (${retryCount}/${maxRetries})...`);
+      } else {
+        console.log("Max retries reached. Stopping.");
+      }
+    }
   }
 };
 
