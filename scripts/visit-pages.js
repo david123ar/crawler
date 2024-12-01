@@ -2,8 +2,8 @@ const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 
 const BASE_URL = "https://animoon.me";
-const VIMALKING_API = "https://vimalking.vercel.app/api/az-list";
-const HIANIME_EPISODES_API = "https://hianimes.vercel.app/anime/episodes";
+const VIMALKING_API = "https://vimal.animoon.me/api/az-list";
+const HIANIME_EPISODES_API = "https://hianimes.animoon.me/anime/episodes";
 
 // Function to launch Puppeteer and visit a page
 const visitPage = async (url, page) => {
